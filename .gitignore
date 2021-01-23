@@ -3,5 +3,5 @@
 #Allow
 !*.cpp
 !*.in
-!Juez/*/*.cpp
-!Juez/*/*.in
+!Juez/*/*/*.cpp
+!Juez/*/*/*.in
