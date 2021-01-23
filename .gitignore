@@ -1,7 +1,6 @@
 #Ignore
 *
 #Allow
-!*.cpp
-!*.in
+!Juez/*/*/*
 !Juez/*/*/*.cpp
 !Juez/*/*/*.in
