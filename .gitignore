@@ -1,5 +1,9 @@
+#Ignore
 Debug/*
 */Debug/*
 *.vcxproj
 *.vcxproj.*
 *.sln
+#Allow
+*.cpp
+*.in
