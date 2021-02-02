@@ -7,17 +7,67 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-// función que resuelve el problema
-// comentario sobre el coste, O(f(N)), donde N es ...
-int resolver(std::vector<int> &fila , int c ,int f) {
+#include <algorithm>
+
+//lleva el elemento f a la posicion i y desplaza todos a la derecha
+//void intercambio(std::vector<int> &fila, int c, int f) {
+//    int aux = fila[f];
+//    for (int i = f; i > c ; i--) {
+//        fila[i] = fila[i - 1];
+//    }
+//    fila[c] = aux;
+//}
+
+void mezcla(std::vector<int>& v, int a, int m, int b) {
+
+    std::vector<int> auxiliar(b - a + 1);
+    // k es el indice del vector original
+    //i es el indice de la primera mitad
+    //j es el indice de la segunda mitad 
+    int i, j, k; 
+    for (int i = a; i <= b; i++) 
+        auxiliar[i-a] = v[i];
+
+    i = 0, j = m - a + 1 , k = a; //es m-a+1 porque la posicion es relativa a "a", porque "a" puede ser un valor de la mitad en adelante tambien
+    while ((j <= b - a) && (i <= m - a)) {
+        if (auxiliar[i] <= auxiliar[j]) {
+            v[k] = auxiliar[i];
+            i++;
+        }
+        else {
+            v[k] = auxiliar[j];
+            j++;
+        }
+        k++;
+    }
+
+    //esto es cuando queda un trozo entre medias porque j = b pero i <= m 
+    while (i <= m-a) {
+        v[k] = auxiliar[i];
+        k++;
+        i++;
+    }
+
+    //esto es cuando queda un trozo al final porque i = j pero j <= b 
+    while (j <= b-a) {
+        v[k] = auxiliar[j];
+        k++;
+        j++;
+    }
+    
+}
+
+
+int resolver(std::vector<int> &fila,int c, int f) {
     int r = 0;
     if (f <= c) {
         r = 0;
-    }else if (c == f - 1 ) {
+    }
+    else if (c == f - 1) {
         if (fila[c] > fila[f]) {
-            int aux = fila[c];
-            fila[c] = fila[f];
-            fila[f] = aux;
+            int aux = fila[f];
+            fila[f] = fila[c];
+            fila[c] = aux;
             r = 1;
         }
         else
@@ -25,39 +75,28 @@ int resolver(std::vector<int> &fila , int c ,int f) {
     }
     else {
         int m = (c + f) / 2;
-        int acu = 0, i = f -1,j = f, aux=0;
-        r += resolver(fila, c, m);
-        r += resolver(fila, m + 1, f);
+        int r1, r2, j, acu = 0,ini=c,fin = f;
 
-        /*Después de devolverme organizados donde cada par de elementos están ordenados decrecientemente, lo que intento es realizar
-        el cambio entre cada par el elementos que falta hasta tener todo el subvector ordenado (simulando los intercambios de la especificacion
-        del problema*/
-        while (i >= 0 || j >= 1) {
-            if (fila[i] > fila[j]) {
-                acu++;
-                aux = fila[i];
-                fila[i] = fila[j];
-                fila[j] = aux;
-                if (j < f) {
-                    /*Esta condicion la uso porque si bien siempre que haya un par este va a ser menor que el siguiente,puede que el elemento
-                    * siga siendo menor que el que le sigue p.e, con i = 1 y j = 2: {1 7} {4 6} => {1 4 7 6} pero 6 sigue siendo menor que 7
-                    * entonces comparo eso tambien
-                    */
-                    if (fila[j] > fila[j + 1]) {
-                        i = j;
-                        j = j + 1;
-                    }
-                }
+        r1 = resolver(fila, c, m);
+        r2 = resolver(fila, m + 1, f);
+
+        j = m + 1;
+
+        while (ini <= j && j <= fin) {
+            if (fila[ini] > fila[j]) {
+                acu += j - ini;
+                //intercambio(fila, ini, j);
+                j++;
             }
-            else {
-                i--;
-                j--;
-            }
+            else
+                ini++;
         }
-        r += acu;
+        mezcla(fila, c, m, f);
+        r = r1 + r2 + acu;
     }
     return r;
 }
+
 
 // resuelve un caso de prueba, leyendo de la entrada la
 // configuración, y escribiendo la respuesta
